@@ -2,6 +2,10 @@ const root = document.getElementById("app");
 let selectedAnswers = [];
 let resultAudio = null;
 
+function escapeHtml(s) {
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); 
+}
+
 // --- Music toggle for quiz phase (Romantic BGM) ---
 function updateMusicBtn() {
   const btn = document.querySelector("[data-testid='bg-music-toggle']");
@@ -94,11 +98,11 @@ function renderQuestion(index, skipAnimation) {
       <div class="card">
         <p class="question-counter">${index + 1} / ${total}</p>
         <div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div>
-        <p class="question-text">${question.text}</p>
+        <p class="question-text">${escapeHtml(question.text)}</p>
         <div class="options" data-testid="options">
           ${question.options.map((opt, i) => `
             <button type="button" class="option${opt === selectedValue ? ' selected' : ''}" data-testid="option" data-index="${i}">
-              <span class="option-text">${opt}</span>
+              <span class="option-text">${escapeHtml(opt)}</span>
             </button>`).join("")}
         </div>
         <p class="choice-hint hidden" data-testid="choice-hint">${APP_CONTENT.emptyChoiceHint}</p>
@@ -180,7 +184,7 @@ function renderResult() {
         <p class="score-number" data-testid="score">${score}</p>
       </div>
       <div class="confession-list" style="z-index:2; position:relative;">
-        ${confession.map(l => `<p class="confession-line">${l}</p>`).join("")}
+        ${confession.map(l => `<p class="confession-line">${escapeHtml(l)}</p>`).join("")}
         <p class="closing-line">${APP_CONTENT.closingLine}</p>
       </div>
       <button type="button" class="btn primary play-music-btn" data-testid="play-music">🎵 播放 Love Story</button>
