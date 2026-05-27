@@ -235,7 +235,7 @@ function renderResult() {
   if (!loveStoryAudio) {
     loveStoryAudio = new Audio("LoveStory.mp3");
     loveStoryAudio.loop = true;
-    loveStoryAudio.volume = 1.0;
+    loveStoryAudio.volume = 0.6;
   }
   loveStoryAudio.currentTime = 0;
   loveStoryAudio.play().catch(() => {});
@@ -244,7 +244,7 @@ function renderResult() {
   if (!resultAudio) {
     resultAudio = new Audio("Baby.mp3");
     resultAudio.loop = true;
-    resultAudio.volume = 0.4;
+    resultAudio.volume = 0.6;
   }
 
   const playBtn = root.querySelector("[data-testid='play-music']");
