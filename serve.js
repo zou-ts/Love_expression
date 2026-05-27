@@ -33,7 +33,6 @@ const server = http.createServer((req, res) => {
   });
 });
 
-server.listen(PORT, '0.0.0.0', () => {
+server.listen(PORT, "127.0.0.1", () => {
   console.log(`Server running at http://localhost:${PORT}`);
-  console.log(`On your phone, open: http://10.38.99.40:${PORT}`);
 });
