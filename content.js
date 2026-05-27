@@ -1,4 +1,4 @@
-﻿const APP_CONTENT = {
+const APP_CONTENT = {
   title: "给你的专属闯关",
   startHint: "认真答完会有小惊喜",
   startButton: "开始",
@@ -7,7 +7,7 @@
   scoreLabel: "这是属于我们的答案",
   closingLine: "认真喜欢你，是我最确定的答案。",
   playMusicHint: "点击播放音乐 🎵",
-  scoreTotal: 52013144,
+  scoreTotal: 5201314,
   questions: [
     {
       text: "什么东西越洗越脏？",

@@ -1,4 +1,4 @@
-﻿// ============================================================
+// ============================================================
 // Romantic Piano BGM Generator v2 — 富有变化的浪漫纯音乐
 // Features: varied melody, arpeggios, dynamics, counter-melody
 // ============================================================
@@ -327,7 +327,8 @@ const RomanticBGM = (function () {
     start() {
       init();
       if (ctx.state === 'suspended') ctx.resume();
-      if (masterGain) masterGain.gain.setValueAtTime(0.55, ctx.currentTime);
+      if (masterGain) masterGain.gain.value = 0.55;
+      if (reverbGain) reverbGain.gain.value = 0.35;
       if (playing) return;
       playing = true;
       nextTime = ctx.currentTime + 0.05;
@@ -339,7 +340,14 @@ const RomanticBGM = (function () {
       playing = false;
       clearInterval(schedulerTimer);
       schedulerTimer = null;
-      if (masterGain) masterGain.gain.setValueAtTime(0, ctx.currentTime);
+      if (masterGain) {
+        masterGain.gain.cancelScheduledValues(ctx.currentTime);
+        masterGain.gain.value = 0;
+      }
+      if (reverbGain) {
+        reverbGain.gain.cancelScheduledValues(ctx.currentTime);
+        reverbGain.gain.value = 0;
+      }
     },
     setVolume(v) { if (masterGain) masterGain.gain.value = Math.max(0,Math.min(1,v)); },
     isPlaying() { return playing; },
