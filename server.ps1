@@ -35,6 +35,8 @@ while ($listener.IsListening) {
   if (Test-Path $filePath) {
     $ext = [System.IO.Path]::GetExtension($filePath).ToLower()
     $res.ContentType = $mimeTypes[$ext]
+    $res.Headers.Add("X-Content-Type-Options", "nosniff")
+    $res.Headers.Add("X-Frame-Options", "DENY")
     $bytes = [System.IO.File]::ReadAllBytes($filePath)
     $res.ContentLength64 = $bytes.Length
     $res.OutputStream.Write($bytes, 0, $bytes.Length)
