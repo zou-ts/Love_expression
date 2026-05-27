@@ -340,14 +340,8 @@ const RomanticBGM = (function () {
       playing = false;
       clearInterval(schedulerTimer);
       schedulerTimer = null;
-      if (masterGain) {
-        masterGain.gain.cancelScheduledValues(ctx.currentTime);
-        masterGain.gain.value = 0;
-      }
-      if (reverbGain) {
-        reverbGain.gain.cancelScheduledValues(ctx.currentTime);
-        reverbGain.gain.value = 0;
-      }
+      if (masterGain) masterGain.gain.value = 0;
+      if (reverbGain) reverbGain.gain.value = 0;
     },
     setVolume(v) { if (masterGain) masterGain.gain.value = Math.max(0,Math.min(1,v)); },
     isPlaying() { return playing; },

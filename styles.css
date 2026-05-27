@@ -1,4 +1,4 @@
-*,
+﻿*,
 *::before,
 *::after {
   box-sizing: border-box;
@@ -558,14 +558,6 @@ body {
     opacity: 0;
   }
 }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(-110vh) rotate(360deg) scale(0.5);
-    opacity: 0;
-  }
-}
 /* Question progress bar */
 .progress-bar {
   width: 100%;
@@ -592,6 +584,7 @@ body {
 /* Floating background music toggle */
 .bg-music-toggle {
   position: fixed;
+  bottom: 24px;
   bottom: max(24px, env(safe-area-inset-bottom, 24px));
   right: 24px;
   width: 48px;
