@@ -255,4 +255,13 @@ function renderResult() {
   });
 }
 
+
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    RomanticBGM.stop();
+    if (resultAudio && !resultAudio.paused) {
+      resultAudio.pause();
+    }
+  }
+});
 renderWelcome();
