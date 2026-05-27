@@ -1,10 +1,10 @@
-const APP_CONTENT = {
-  title: "给你的专属闯关",
+﻿const APP_CONTENT = {
+  title: "小测试",
   startHint: "认真答完会有小惊喜",
   startButton: "开始",
   nextButton: "下一题",
   emptyChoiceHint: "先选一个嘛～",
-  scoreLabel: "这是属于我们的答案",
+  name: "丽莎", scoreLabel: "这是属于我们的答案",
   closingLine: "认真喜欢你，是我最确定的答案。",
   playMusicHint: "点击播放音乐 🎵",
   scoreTotal: 5201314,

@@ -1,6 +1,7 @@
-const root = document.getElementById("app");
+﻿const root = document.getElementById("app");
 let selectedAnswers = [];
 let resultAudio = null;
+let loveStoryAudio = null;
 
 function escapeHtml(s) {
   return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); 
@@ -58,6 +59,33 @@ function spawnPetals() {
   addPetal();
 }
 
+
+
+// --- Heart burst explosion effect ---
+function burstHearts(container, count) {
+  const emojis = ["❤️","💖","💗","🩷","🫡","✨","🌸","💝","💘","💓"];
+  for (let i = 0; i < count; i++) {
+    const el = document.createElement("span");
+    el.className = "burst-heart";
+    el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    const angle = Math.random() * Math.PI * 2;
+    const dist = 30 + Math.random() * 60;
+    const dx = Math.cos(angle) * dist;
+    const dy = Math.sin(angle) * dist;
+    el.style.left = "50%";
+    el.style.top = "50%";
+    el.style.fontSize = (14 + Math.random() * 24) + "px";
+    el.style.setProperty("--dx", dx + "vw");
+    el.style.setProperty("--dy", dy + "vh");
+    el.style.setProperty("--rot", (Math.random() * 720 - 360) + "deg");
+    const dur = 1.5 + Math.random() * 1.5;
+    el.style.animationDuration = dur + "s";
+    el.style.animationDelay = (Math.random() * 0.4) + "s";
+    container.appendChild(el);
+    setTimeout(() => el.remove(), (dur + 0.5) * 1000);
+  }
+}
+
 // ============================================================
 // Welcome screen
 // ============================================================
@@ -103,6 +131,7 @@ function renderQuestion(index, skipAnimation) {
           ${question.options.map((opt, i) => `
             <button type="button" class="option${opt === selectedValue ? ' selected' : ''}" data-testid="option" data-index="${i}">
               <span class="option-text">${escapeHtml(opt)}</span>
+              <img class="option-mark" src="dog-heart.png" alt="love">
             </button>`).join("")}
         </div>
         <p class="choice-hint hidden" data-testid="choice-hint">${APP_CONTENT.emptyChoiceHint}</p>
@@ -180,6 +209,7 @@ function renderResult() {
       <canvas class="welcome-canvas" data-testid="result-canvas"></canvas>
       <div class="hearts-container" data-testid="hearts"></div>
       <div class="score-appear" style="z-index:2; position:relative;">
+        <p class="name-title">${APP_CONTENT.name}</p>
         <p class="score-label">${APP_CONTENT.scoreLabel}</p>
         <p class="score-number" data-testid="score">${score}</p>
       </div>
@@ -187,7 +217,8 @@ function renderResult() {
         ${confession.map(l => `<p class="confession-line">${escapeHtml(l)}</p>`).join("")}
         <p class="closing-line">${APP_CONTENT.closingLine}</p>
       </div>
-      <button type="button" class="btn primary play-music-btn" data-testid="play-music">🎵 播放 Love Story</button>
+      <p class="confess-question" style="z-index:2; position:relative;">你愿意做我女朋友吗？</p>
+      <button type="button" class="btn primary confess-btn" data-testid="play-music">我愿意 💖</button>
     </section>
   `;
 
@@ -200,11 +231,20 @@ function renderResult() {
     }).start();
   }
 
-  // Love Story audio
+  // Love Story audio - auto-play on result page
+  if (!loveStoryAudio) {
+    loveStoryAudio = new Audio("LoveStory.mp3");
+    loveStoryAudio.loop = true;
+    loveStoryAudio.volume = 1.0;
+  }
+  loveStoryAudio.currentTime = 0;
+  loveStoryAudio.play().catch(() => {});
+
+  // Baby MP3 audio - played on confession click
   if (!resultAudio) {
-    resultAudio = new Audio("Taylor Swift - Love Story.mp3");
+    resultAudio = new Audio("Baby.mp3");
     resultAudio.loop = true;
-    resultAudio.volume = 0.8;
+    resultAudio.volume = 0.4;
   }
 
   const playBtn = root.querySelector("[data-testid='play-music']");
@@ -238,24 +278,21 @@ function renderResult() {
     if (heartsTimer) clearTimeout(heartsTimer);
   }
 
-  // Auto-play Love Story
-  resultAudio.play().then(() => {
-    playBtn.textContent = "暂停 Love Story ⏸";
-    startHearts();
-  }).catch(() => {
-    playBtn.textContent = "🎵 播放 Love Story";
-  });
-
   playBtn.addEventListener("click", () => {
-    if (resultAudio.paused) {
-      resultAudio.play().catch(() => {});
-      playBtn.textContent = "暂停 Love Story ⏸";
-      startHearts();
-    } else {
-      resultAudio.pause();
-      playBtn.textContent = "🎵 播放 Love Story";
-      stopHearts();
+    playBtn.textContent = "💖 我愿意！";
+    playBtn.style.background = "linear-gradient(135deg, #ff6b8a, #ff8da1)";
+    playBtn.style.color = "#fff";
+    playBtn.style.borderColor = "#ff6b8a";
+    playBtn.style.animation = "btn-glow 1.5s ease-in-out infinite";
+    const heartsContainer = root.querySelector("[data-testid='hearts']");
+    if (heartsContainer) {
+      burstHearts(heartsContainer, 60);
+      setTimeout(() => burstHearts(heartsContainer, 40), 600);
+      setTimeout(() => burstHearts(heartsContainer, 30), 1200);
     }
+    // Play Baby - Love Story keeps playing
+    resultAudio.play().catch(() => {});
+    startHearts();
   });
 }
 
@@ -263,15 +300,10 @@ function renderResult() {
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) {
     RomanticBGM.stop();
-    if (resultAudio && !resultAudio.paused) {
-      resultAudio.pause();
-    }
+    if (loveStoryAudio && !loveStoryAudio.paused) loveStoryAudio.pause();
+    if (resultAudio && !resultAudio.paused) resultAudio.pause();
   }
   // Sync button UI after visibility change
   updateMusicBtn();
-  const playBtn = document.querySelector("[data-testid='play-music']");
-  if (playBtn && resultAudio) {
-    playBtn.textContent = resultAudio.paused ? "🎵 播放 Love Story" : "暂停 Love Story ⏸";
-  }
 });
 renderWelcome();
