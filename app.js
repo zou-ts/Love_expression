@@ -1,4 +1,4 @@
-﻿const root = document.getElementById("app");
+const root = document.getElementById("app");
 let selectedAnswers = [];
 let resultAudio = null;
 
@@ -262,6 +262,12 @@ document.addEventListener("visibilitychange", () => {
     if (resultAudio && !resultAudio.paused) {
       resultAudio.pause();
     }
+  }
+  // Sync button UI after visibility change
+  updateMusicBtn();
+  const playBtn = document.querySelector("[data-testid='play-music']");
+  if (playBtn && resultAudio) {
+    playBtn.textContent = resultAudio.paused ? "🎵 播放 Love Story" : "暂停 Love Story ⏸";
   }
 });
 renderWelcome();
