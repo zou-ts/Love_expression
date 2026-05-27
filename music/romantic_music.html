@@ -1,0 +1,591 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>温柔浪漫 - 答题背景音乐</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: linear-gradient(135deg, #fce4ec 0%, #f3e5f5 50%, #e8eaf6 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #4a148c;
+  }
+  .container {
+    text-align: center;
+    padding: 40px;
+    background: rgba(255,255,255,0.85);
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(136,14,79,0.15);
+    max-width: 500px;
+    width: 90%;
+  }
+  h1 {
+    font-size: 2em;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, #ad1457, #6a1b9a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .subtitle {
+    color: #7b1fa2;
+    font-size: 0.95em;
+    margin-bottom: 30px;
+    opacity: 0.8;
+  }
+  .music-box {
+    width: 200px;
+    height: 200px;
+    margin: 0 auto 30px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f48fb1, #ce93d8, #9fa8da);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 10px 40px rgba(156,39,176,0.3);
+  }
+  .music-box:hover { transform: scale(1.05); box-shadow: 0 15px 50px rgba(156,39,176,0.4); }
+  .music-box.playing { animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 10px 40px rgba(156,39,176,0.3); }
+    50% { box-shadow: 0 10px 60px rgba(156,39,176,0.5); }
+  }
+  .music-icon { font-size: 60px; color: white; text-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+  .play-text {
+    position: absolute;
+    bottom: -35px;
+    color: #7b1fa2;
+    font-size: 0.9em;
+    font-weight: 500;
+  }
+  .controls { margin-top: 50px; }
+  .btn {
+    background: linear-gradient(135deg, #f06292, #ba68c8);
+    color: white;
+    border: none;
+    padding: 14px 40px;
+    border-radius: 50px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 6px 20px rgba(156,39,176,0.3);
+    margin: 0 8px;
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(156,39,176,0.4); }
+  .btn:active { transform: translateY(0); }
+  .btn.stop { background: linear-gradient(135deg, #ef5350, #e53935); }
+  .info {
+    margin-top: 30px;
+    font-size: 0.85em;
+    color: #8e24aa;
+    opacity: 0.7;
+    line-height: 1.6;
+  }
+  .progress-bar {
+    width: 100%;
+    height: 6px;
+    background: rgba(156,39,176,0.15);
+    border-radius: 3px;
+    margin-top: 20px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #f06292, #ba68c8);
+    border-radius: 3px;
+    width: 0%;
+    transition: width 0.3s;
+  }
+  .visualizer {
+    display: flex;
+    justify-content: center;
+    gap: 3px;
+    margin-top: 15px;
+    height: 40px;
+    align-items: flex-end;
+  }
+  .bar {
+    width: 4px;
+    background: linear-gradient(to top, #f06292, #ba68c8);
+    border-radius: 2px;
+    transition: height 0.1s;
+    height: 5px;
+  }
+  .note-display {
+    margin-top: 15px;
+    font-size: 0.9em;
+    color: #7b1fa2;
+    min-height: 24px;
+  }
+  .volume-control {
+    margin-top: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  .volume-control label { font-size: 0.85em; color: #7b1fa2; }
+  .volume-control input[type="range"] {
+    width: 120px;
+    accent-color: #ba68c8;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>温柔浪漫</h1>
+  <p class="subtitle">答题期间纯背景音乐 · F大调华尔兹</p>
+  
+  <div class="music-box" id="musicBox" onclick="togglePlay()">
+    <span class="music-icon">♪</span>
+    <span class="play-text" id="playText">点击播放</span>
+  </div>
+  
+  <div class="visualizer" id="visualizer">
+    <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+    <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+    <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+    <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+    <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+    <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+    <div class="bar"></div><div class="bar"></div>
+  </div>
+  
+  <div class="note-display" id="noteDisplay"></div>
+  
+  <div class="progress-bar">
+    <div class="progress-fill" id="progress"></div>
+  </div>
+  
+  <div class="controls">
+    <button class="btn" id="playBtn" onclick="togglePlay()">▶ 播放</button>
+    <button class="btn stop" id="stopBtn" onclick="stopMusic()">■ 停止</button>
+  </div>
+  
+  <div class="volume-control">
+    <label>🔊 音量</label>
+    <input type="range" id="volume" min="0" max="100" value="70" oninput="setVolume(this.value)">
+  </div>
+  
+  <div class="info">
+    ♫ 钢琴 · 68 BPM · 约4分钟<br>
+    温柔浪漫风格 · 适合答题时聆听
+  </div>
+</div>
+
+<script>
+// ============================================================
+// Piano Synthesizer using Web Audio API
+// ============================================================
+let audioCtx = null;
+let masterGain = null;
+let isPlaying = false;
+let scheduledNotes = [];
+let animFrame = null;
+let startTime = 0;
+let totalDuration = 0;
+
+// Note frequency lookup
+const NOTE_FREQ = {};
+const NOTE_NAMES_ = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+for (let i = 0; i < 128; i++) {
+  const name = NOTE_NAMES_[i % 12] + Math.floor(i / 12 - 1);
+  NOTE_FREQ[name] = 440 * Math.pow(2, (i - 69) / 12);
+}
+// Flat names
+NOTE_FREQ['Bb3'] = NOTE_FREQ['A#3'];
+NOTE_FREQ['Bb4'] = NOTE_FREQ['A#4'];
+NOTE_FREQ['Bb5'] = NOTE_FREQ['A#5'];
+NOTE_FREQ['Eb3'] = NOTE_FREQ['D#3'];
+NOTE_FREQ['Eb4'] = NOTE_FREQ['D#4'];
+
+// MIDI note to frequency
+function midiToFreq(midi) {
+  return 440 * Math.pow(2, (midi - 69) / 12);
+}
+
+// Create a piano-like tone
+function playNote(freq, startTime, duration, velocity = 0.5) {
+  if (!audioCtx) return;
+  
+  const now = audioCtx.currentTime;
+  const t = now + startTime;
+  
+  // Multiple oscillators for richer piano sound
+  const osc1 = audioCtx.createOscillator(); // fundamental
+  const osc2 = audioCtx.createOscillator(); // 2nd harmonic
+  const osc3 = audioCtx.createOscillator(); // slight detune for warmth
+  
+  osc1.type = 'sine';
+  osc1.frequency.value = freq;
+  
+  osc2.type = 'triangle';
+  osc2.frequency.value = freq * 2; // octave harmonic
+  osc2.detune.value = 3; // slight detune
+  
+  osc3.type = 'sine';
+  osc3.frequency.value = freq;
+  osc3.detune.value = -5; // warmth
+  
+  // Gain nodes for each oscillator
+  const gain1 = audioCtx.createGain();
+  const gain2 = audioCtx.createGain();
+  const gain3 = audioCtx.createGain();
+  
+  // ADSR envelope for piano
+  const attack = 0.01;
+  const decay = 0.3;
+  const sustain = velocity * 0.3;
+  const release = Math.min(duration * 0.5, 0.8);
+  
+  // Fundamental
+  gain1.gain.setValueAtTime(0, t);
+  gain1.gain.linearRampToValueAtTime(velocity * 0.6, t + attack);
+  gain1.gain.exponentialRampToValueAtTime(sustain, t + attack + decay);
+  gain1.gain.setValueAtTime(sustain, t + duration);
+  gain1.gain.exponentialRampToValueAtTime(0.001, t + duration + release);
+  
+  // Harmonic (quieter)
+  gain2.gain.setValueAtTime(0, t);
+  gain2.gain.linearRampToValueAtTime(velocity * 0.15, t + attack);
+  gain2.gain.exponentialRampToValueAtTime(sustain * 0.2, t + attack + decay * 0.5);
+  gain2.gain.setValueAtTime(sustain * 0.2, t + duration);
+  gain2.gain.exponentialRampToValueAtTime(0.001, t + duration + release * 0.7);
+  
+  // Detuned (very quiet)
+  gain3.gain.setValueAtTime(0, t);
+  gain3.gain.linearRampToValueAtTime(velocity * 0.1, t + attack);
+  gain3.gain.exponentialRampToValueAtTime(sustain * 0.1, t + attack + decay);
+  gain3.gain.setValueAtTime(sustain * 0.1, t + duration);
+  gain3.gain.exponentialRampToValueAtTime(0.001, t + duration + release);
+  
+  // Connect
+  osc1.connect(gain1).connect(masterGain);
+  osc2.connect(gain2).connect(masterGain);
+  osc3.connect(gain3).connect(masterGain);
+  
+  // Start and stop
+  osc1.start(t);
+  osc2.start(t);
+  osc3.start(t);
+  osc1.stop(t + duration + release + 0.1);
+  osc2.stop(t + duration + release + 0.1);
+  osc3.stop(t + duration + release + 0.1);
+  
+  // Track for cleanup
+  scheduledNotes.push(osc1, osc2, osc3);
+}
+
+// ============================================================
+// Music Score Definition
+// ============================================================
+// MIDI note numbers
+const M = {
+  A3: 57, Bb3: 58, B3: 59, C4: 60, D4: 62, Eb4: 63, E4: 64,
+  F4: 65, G4: 67, A4: 69, Bb4: 70, B4: 71, C5: 72, D5: 74,
+  Eb5: 75, E5: 76, F5: 77, G5: 79, A5: 81,
+  F2: 41, G2: 43, A2: 45, Bb2: 46, C3: 48, D3: 50, Eb3: 51, E3: 52,
+  F3: 53, G3: 55, A3b: 56
+};
+
+// Timing constants (in beats, 1 beat = quarter note)
+const BPM = 68;
+const BEAT = 60 / BPM; // seconds per beat
+const Q = 1;      // quarter = 1 beat
+const H = 2;      // half
+const W = 4;      // whole
+const E_ = 0.5;   // eighth
+const S_ = 0.25;  // sixteenth
+const DOT = d => d * 1.5;
+const TRIP = d => d * 2 / 3;
+
+// Schedule a note (time in beats from start)
+function sch(time, midi, dur, vel = 0.5) {
+  playNote(midiToFreq(midi), time * BEAT, dur * BEAT, vel);
+}
+
+// Schedule chord
+function schChord(time, midis, dur, vel = 0.4) {
+  midis.forEach(m => sch(time, m, dur, vel));
+}
+
+// ============================================================
+// COMPOSE THE PIECE
+// ============================================================
+function composeRomanticWaltz() {
+  let t = 0;
+  
+  // --- INTRO (8 bars) ---
+  const introBars = [
+    { bass: M.F2, notes: [M.F3, M.A3, M.C4], mel: M.A4 },
+    { bass: M.Bb2, notes: [M.Bb3, M.D4, M.F4], mel: M.D5 },
+    { bass: M.D3, notes: [M.D3, M.F3, M.A3], mel: M.F4 },
+    { bass: M.C3, notes: [M.C3, M.E3, M.G3], mel: M.E4 },
+    { bass: M.F2, notes: [M.F3, M.A3, M.C4], mel: M.C5 },
+    { bass: M.Bb2, notes: [M.Bb3, M.D4, M.F4], mel: M.F5 },
+    { bass: M.A2, notes: [M.A3, M.C4, M.E4], mel: M.E5 },
+    { bass: M.C3, notes: [M.C3, M.E3, M.G3], mel: M.G4 },
+  ];
+  
+  introBars.forEach(bar => {
+    // Beat 1: bass
+    sch(t, bar.bass - 12, Q, 0.25);
+    // Beat 1-2: arpeggio
+    bar.notes.forEach((n, i) => {
+      sch(t + E_ + i * TRIP(E_), n, Q, 0.3);
+    });
+    // Beat 3: melody
+    sch(t + H, bar.mel, Q - S_, 0.4);
+    t += 3;
+  });
+  
+  // --- SECTION A (8 bars) ---
+  const sectionABars = [
+    { bass: M.F2, notes: [M.F3, M.A3, M.C4], mel: [M.C5, M.A4, M.F4] },
+    { bass: M.D3, notes: [M.D3, M.F3, M.A3], mel: [M.A4, M.F4, M.D4] },
+    { bass: M.Bb2, notes: [M.Bb3, M.D4, M.F4], mel: [M.D5, M.Bb4, M.F4] },
+    { bass: M.C3, notes: [M.C3, M.E3, M.G3], mel: [M.E5, M.D5, M.C5] },
+    { bass: M.F2, notes: [M.F3, M.A3, M.C4], mel: [M.F5, M.E5, M.C5] },
+    { bass: M.A2, notes: [M.A3, M.C4, M.E4], mel: [M.E5, M.C5, M.A4] },
+    { bass: M.Bb2, notes: [M.Bb3, M.D4, M.F4], mel: [M.F5, M.D5, M.Bb4] },
+    { bass: M.C3, notes: [M.C3, M.E3, M.G3], mel: [M.G4, M.E4, M.C4] },
+  ];
+  
+  function playSectionA() {
+    sectionABars.forEach((bar, idx) => {
+      sch(t, bar.bass - 12, H, 0.28);
+      bar.notes.forEach((n, i) => {
+        sch(t + Q + i * TRIP(E_), n, Q, 0.32);
+      });
+      sch(t + H, bar.mel[0], Q - S_, 0.42);
+      if (idx < sectionABars.length - 1) {
+        sch(t + H + Q - S_, bar.mel[1], S_, 0.35);
+      }
+      t += 3;
+    });
+  }
+  
+  playSectionA();
+  playSectionA();
+  
+  // --- SECTION B (8 bars) ---
+  const sectionBBars = [
+    { bass: M.Eb3, notes: [M.Eb3, M.G3, M.Bb3], mel: [M.D5, M.Bb4, M.G4] },
+    { bass: M.Bb2, notes: [M.Bb3, M.D4, M.F4], mel: [M.F5, M.D5, M.Bb4] },
+    { bass: M.G2, notes: [M.G3, M.Bb3, M.D4], mel: [M.Bb4, M.G4, M.D4] },
+    { bass: M.C3, notes: [M.C3, M.E3, M.G3], mel: [M.A4, M.G4, M.F4] },
+    { bass: M.A2, notes: [M.A3, M.C4, M.E4], mel: [M.C5, M.A4, M.E4] },
+    { bass: M.D3, notes: [M.D3, M.F3, M.A3], mel: [M.F4, M.D4, M.A3] },
+    { bass: M.Bb2, notes: [M.Bb3, M.D4, M.F4], mel: [M.D5, M.F5, M.E5] },
+    { bass: M.C3, notes: [M.C3, M.E3, M.G3], mel: [M.G4, M.E4, M.C4] },
+  ];
+  
+  function playSectionB() {
+    sectionBBars.forEach(bar => {
+      sch(t, bar.bass - 12, DOT(Q), 0.28);
+      sch(t + E_, bar.notes[0], Q, 0.25);
+      bar.notes.forEach((n, i) => {
+        sch(t + Q + i * TRIP(E_), n, Q, 0.32);
+      });
+      sch(t + H, bar.mel[0], DOT(E_), 0.45);
+      sch(t + H + DOT(E_), bar.mel[1], E_, 0.35);
+      t += 3;
+    });
+  }
+  
+  playSectionB();
+  
+  // --- SECTION A' (8 bars) - embellished ---
+  const sectionAPrime = [
+    { bass: M.F2, notes: [M.F3, M.A3, M.C4], mel: [M.C5, M.A4, M.G4, M.F4] },
+    { bass: M.D3, notes: [M.D3, M.F3, M.A3], mel: [M.A4, M.F4, M.E4, M.D4] },
+    { bass: M.Bb2, notes: [M.Bb3, M.D4, M.F4], mel: [M.F5, M.D5, M.C5, M.Bb4] },
+    { bass: M.C3, notes: [M.C3, M.E3, M.G3], mel: [M.E5, M.D5, M.C5, M.Bb4] },
+    { bass: M.F2, notes: [M.F3, M.A3, M.C4], mel: [M.A4, M.C5, M.F5, M.E5] },
+    { bass: M.A2, notes: [M.A3, M.C4, M.E4], mel: [M.C5, M.E5, M.D5, M.C5] },
+    { bass: M.Bb2, notes: [M.Bb3, M.D4, M.F4], mel: [M.D5, M.F5, M.E5, M.D5] },
+    { bass: M.C3, notes: [M.C3, M.E3, M.G3], mel: [M.E4, M.G4, M.C5, M.G4] },
+  ];
+  
+  function playSectionAPrime() {
+    sectionAPrime.forEach(bar => {
+      sch(t, bar.bass - 12, H, 0.28);
+      bar.notes.forEach((n, i) => {
+        sch(t + E_ + i * TRIP(E_), n, Q + E_, 0.3);
+      });
+      bar.mel.forEach((m, i) => {
+        sch(t + H + i * S_, m, S_ + 0.05, 0.42 - i * 0.04);
+      });
+      t += 3;
+    });
+  }
+  
+  playSectionAPrime();
+  
+  // Repeat A and B
+  playSectionA();
+  playSectionB();
+  playSectionAPrime();
+  
+  // --- INTRO REPRISE (4 bars) ---
+  const introReprise = [
+    { bass: M.F2, notes: [M.F3, M.A3, M.C4], mel: M.A4 },
+    { bass: M.Bb2, notes: [M.Bb3, M.D4, M.F4], mel: M.D5 },
+    { bass: M.D3, notes: [M.D3, M.F3, M.A3], mel: M.F4 },
+    { bass: M.F2, notes: [M.F3, M.A3, M.C4], mel: M.C5 },
+  ];
+  
+  introReprise.forEach(bar => {
+    sch(t, bar.bass - 12, W, 0.2);
+    bar.notes.forEach((n, i) => {
+      sch(t + Q + i * TRIP(E_), n, DOT(Q), 0.25);
+    });
+    sch(t + H + Q, bar.mel, DOT(Q), 0.35);
+    t += 3;
+  });
+  
+  // --- OUTRO (4 bars) - fade out ---
+  const outroChords = [
+    [M.F3, M.A3, M.C4],
+    [M.Bb3, M.D4, M.F4],
+    [M.F3, M.A3, M.C4],
+    [M.F3, M.A3, M.C4],
+  ];
+  
+  outroChords.forEach((ch, i) => {
+    const vel = 0.3 - i * 0.06;
+    sch(t, M.F2 - 12, W + Q, 0.18 - i * 0.03);
+    ch.forEach(n => sch(t + Q, n, W, Math.max(vel, 0.1)));
+    t += i === 3 ? 6 : 3;
+  });
+  
+  totalDuration = t * BEAT;
+  return totalDuration;
+}
+
+// ============================================================
+// Playback Control
+// ============================================================
+function initAudio() {
+  if (audioCtx) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  masterGain = audioCtx.createGain();
+  masterGain.gain.value = 0.7;
+  masterGain.connect(audioCtx.destination);
+}
+
+function togglePlay() {
+  if (isPlaying) {
+    pauseMusic();
+  } else {
+    playMusic();
+  }
+}
+
+function playMusic() {
+  initAudio();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  
+  // Clear previous
+  scheduledNotes.forEach(o => { try { o.stop(); } catch(e){} });
+  scheduledNotes = [];
+  
+  // Compose and play
+  composeRomanticWaltz();
+  
+  isPlaying = true;
+  startTime = Date.now();
+  updateUI();
+  animateVisualizer();
+  updateProgress();
+}
+
+function pauseMusic() {
+  if (audioCtx) audioCtx.suspend();
+  isPlaying = false;
+  document.getElementById('musicBox').classList.remove('playing');
+  document.getElementById('playBtn').textContent = '▶ 继续';
+  document.getElementById('playText').textContent = '点击继续';
+  cancelAnimationFrame(animFrame);
+}
+
+function stopMusic() {
+  scheduledNotes.forEach(o => { try { o.stop(); } catch(e){} });
+  scheduledNotes = [];
+  if (audioCtx) {
+    audioCtx.close();
+    audioCtx = null;
+  }
+  isPlaying = false;
+  document.getElementById('musicBox').classList.remove('playing');
+  document.getElementById('playBtn').textContent = '▶ 播放';
+  document.getElementById('playText').textContent = '点击播放';
+  document.getElementById('progress').style.width = '0%';
+  document.getElementById('noteDisplay').textContent = '';
+  cancelAnimationFrame(animFrame);
+  resetBars();
+}
+
+function setVolume(val) {
+  if (masterGain) masterGain.gain.value = val / 100;
+}
+
+// ============================================================
+// UI Updates
+// ============================================================
+function updateUI() {
+  document.getElementById('musicBox').classList.add('playing');
+  document.getElementById('playBtn').textContent = '⏸ 暂停';
+  document.getElementById('playText').textContent = '正在播放...';
+}
+
+function updateProgress() {
+  if (!isPlaying) return;
+  const elapsed = (Date.now() - startTime) / 1000;
+  const pct = Math.min((elapsed / totalDuration) * 100, 100);
+  document.getElementById('progress').style.width = pct + '%';
+  
+  if (pct >= 100) {
+    stopMusic();
+    return;
+  }
+  requestAnimationFrame(updateProgress);
+}
+
+function animateVisualizer() {
+  if (!isPlaying) return;
+  const bars = document.querySelectorAll('.bar');
+  bars.forEach(bar => {
+    bar.style.height = (Math.random() * 35 + 5) + 'px';
+  });
+  
+  // Update note display
+  const sections = ['前奏', 'A段', 'A段', 'B段', 'A\'段', 'A段', 'B段', 'A\'段', '前奏', '尾声'];
+  const elapsed = (Date.now() - startTime) / 1000;
+  const barTime = 3 * BEAT;
+  const secIdx = Math.min(Math.floor(elapsed / (barTime * 8)), sections.length - 1);
+  document.getElementById('noteDisplay').textContent = '♪ ' + sections[secIdx] + ' ♪';
+  
+  animFrame = requestAnimationFrame(animateVisualizer);
+}
+
+function resetBars() {
+  document.querySelectorAll('.bar').forEach(b => b.style.height = '5px');
+}
+
+// Keyboard shortcut
+document.addEventListener('keydown', e => {
+  if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
+  if (e.code === 'Escape') stopMusic();
+});
+</script>
+</body>
+</html>
