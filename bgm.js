@@ -327,6 +327,7 @@ const RomanticBGM = (function () {
     start() {
       init();
       if (ctx.state === 'suspended') ctx.resume();
+      if (masterGain) masterGain.gain.setValueAtTime(0.55, ctx.currentTime);
       if (playing) return;
       playing = true;
       nextTime = ctx.currentTime + 0.05;
@@ -338,6 +339,7 @@ const RomanticBGM = (function () {
       playing = false;
       clearInterval(schedulerTimer);
       schedulerTimer = null;
+      if (masterGain) masterGain.gain.setValueAtTime(0, ctx.currentTime);
     },
     setVolume(v) { if (masterGain) masterGain.gain.value = Math.max(0,Math.min(1,v)); },
     isPlaying() { return playing; },
