@@ -433,15 +433,20 @@ body {
 .paw-toe-4 { top: 24px; right: 6px; transform: rotate(30deg); width: 32px; height: 32px; }
 
 .result-screen {
-  min-height: 100dvh;
+  height: 100dvh;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-top: -20px;
+  margin-bottom: -32px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 24px;
+  gap: 12px;
   text-align: center;
   position: relative;
-  padding: 40px 20px;
+  padding: 20px 16px;
+  overflow: hidden;
 }
 
 .score-appear {
@@ -461,7 +466,7 @@ body {
 }
 
 .score-number {
-  font-size: 48px;
+  font-size: 40px;
   font-weight: 800;
   color: #e85580;
   margin: 0;
@@ -472,14 +477,14 @@ body {
 .confession-list {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  margin-top: 12px;
+  gap: 8px;
+  margin-top: 6px;
   padding: 0 8px;
 }
 
 .confession-line {
   font-size: 16px;
-  line-height: 1.8;
+  line-height: 1.6;
   color: #6b5060;
   opacity: 0;
   animation: line-in 0.8s ease-out forwards;
@@ -498,7 +503,7 @@ body {
   font-size: 18px;
   font-weight: 700;
   color: #e85580;
-  margin-top: 12px;
+  margin-top: 6px;
   opacity: 0;
   animation: line-in 0.8s ease-out 1.8s forwards;
 }
@@ -681,7 +686,7 @@ body {
   font-size: 18px;
   font-weight: 700;
   color: #e85580;
-  margin: 20px 0 12px 0;
+  margin: 8px 0 4px 0;
   letter-spacing: 1px;
 }
 
@@ -693,7 +698,7 @@ body {
   font-size: 18px;
   font-weight: 700;
   letter-spacing: 2px;
-  padding: 16px 48px;
+  padding: 14px 40px;
   border-radius: 50px;
   box-shadow: 0 4px 20px rgba(255,107,138,0.3);
   transition: all 0.3s ease;
