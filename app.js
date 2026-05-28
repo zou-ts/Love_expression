@@ -191,7 +191,17 @@ function renderCatPaw() {
     </section>
   `;
   root.appendChild(createMusicToggle());
-  root.querySelector("[data-testid='cat-paw-btn']").addEventListener("click", () => renderResult());
+  root.querySelector("[data-testid='cat-paw-btn']").addEventListener("click", () => {
+    RomanticBGM.stop();
+    if (!loveStoryAudio) {
+      loveStoryAudio = new Audio("LoveStory.mp3");
+      loveStoryAudio.loop = true;
+      loveStoryAudio.volume = 0.6;
+    }
+    loveStoryAudio.currentTime = 0;
+    loveStoryAudio.play().catch(function(){});
+    renderResult();
+  });
 }
 
 // ============================================================
@@ -231,14 +241,13 @@ function renderResult() {
     }).start();
   }
 
-  // Love Story audio - auto-play on result page
+  // Love Story audio - already started in cat paw click handler
   if (!loveStoryAudio) {
     loveStoryAudio = new Audio("LoveStory.mp3");
     loveStoryAudio.loop = true;
     loveStoryAudio.volume = 0.6;
+    loveStoryAudio.play().catch(() => {});
   }
-  loveStoryAudio.currentTime = 0;
-  loveStoryAudio.play().catch(() => {});
 
   // Baby MP3 audio - played on confession click
   if (!resultAudio) {
