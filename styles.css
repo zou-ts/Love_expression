@@ -592,48 +592,6 @@ body {
   margin: 0;
 }
 
-/* Floating background music toggle */
-.bg-music-toggle {
-  position: fixed;
-  bottom: 24px;
-  bottom: max(24px, env(safe-area-inset-bottom, 24px));
-  right: 24px;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: 2px solid rgba(255, 182, 193, 0.6);
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  font-size: 22px;
-  cursor: pointer;
-  z-index: 999;
-  box-shadow: 0 4px 16px rgba(255, 107, 138, 0.2), 0 2px 8px rgba(0, 0, 0, 0.06);
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: music-btn-pulse 2.5s ease-in-out infinite;
-}
-
-.bg-music-toggle:hover {
-  background: #fff5f7;
-  border-color: #ff8da1;
-  box-shadow: 0 6px 24px rgba(255, 107, 138, 0.3);
-  transform: scale(1.08);
-  animation: none;
-}
-
-.bg-music-toggle:active {
-  transform: scale(0.92);
-}
-
-@keyframes music-btn-pulse {
-  0%, 100% { box-shadow: 0 4px 16px rgba(255, 107, 138, 0.2), 0 2px 8px rgba(0, 0, 0, 0.06); }
-  50% { box-shadow: 0 4px 24px rgba(255, 107, 138, 0.4), 0 2px 12px rgba(0, 0, 0, 0.08); }
-}
-
-/* Heart burst explosion */
 .burst-heart {
   position: fixed;
   pointer-events: none;

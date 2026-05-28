@@ -7,33 +7,7 @@ function escapeHtml(s) {
   return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); 
 }
 
-// --- Music toggle for quiz phase (Romantic BGM) ---
-function updateMusicBtn() {
-  const btn = document.querySelector("[data-testid='bg-music-toggle']");
-  if (!btn) return;
-  const on = typeof RomanticBGM !== 'undefined' && RomanticBGM.isPlaying();
-  btn.textContent = on ? "🎵" : "🔇";
-  btn.title = on ? "暂停音乐" : "播放音乐";
-}
-
-function createMusicToggle() {
-  const btn = document.createElement("button");
-  btn.type = "button";
-  btn.className = "bg-music-toggle";
-  btn.setAttribute("data-testid", "bg-music-toggle");
-  const on = typeof RomanticBGM !== 'undefined' && RomanticBGM.isPlaying();
-  btn.textContent = on ? "🎵" : "🔇";
-  btn.title = on ? "暂停音乐" : "播放音乐";
-  btn.addEventListener("click", () => {
-    if (RomanticBGM.isPlaying()) {
-      RomanticBGM.stop();
-    } else {
-      RomanticBGM.start();
-    }
-    updateMusicBtn();
-  });
-  return btn;
-}
+// Music toggle removed
 
 // --- Petal effect ---
 function spawnPetals() {
@@ -144,7 +118,6 @@ function renderQuestion(index, skipAnimation) {
   `;
 
   // Floating music toggle
-  root.appendChild(createMusicToggle());
 
   const buttons = root.querySelectorAll("[data-testid='option']");
   const hint = root.querySelector("[data-testid='choice-hint']");
@@ -190,7 +163,6 @@ function renderCatPaw() {
       </div>
     </section>
   `;
-  root.appendChild(createMusicToggle());
   root.querySelector("[data-testid='cat-paw-btn']").addEventListener("click", () => {
     RomanticBGM.stop();
     if (!loveStoryAudio) {
@@ -312,7 +284,6 @@ document.addEventListener("visibilitychange", () => {
     if (loveStoryAudio && !loveStoryAudio.paused) loveStoryAudio.pause();
     if (resultAudio && !resultAudio.paused) resultAudio.pause();
   }
-  // Sync button UI after visibility change
-  updateMusicBtn();
+
 });
 renderWelcome();
